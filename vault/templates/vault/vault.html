@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oxford Bound - Daily English Vault</title>
+    
+    <!-- Google Fonts: Playfair Display (British classic feel) & Inter (Readability) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'uk-navy': '#012169',
+                        'uk-red': '#C8102E',
+                        'uk-paper': '#F4F1EA',
+                        'uk-gold': '#C5A97D'
+                    },
+                    fontFamily: {
+                        'serif': ['"Playfair Display"', 'serif'],
+                        'sans': ['Inter', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'uk-card': '8px 8px 0px 0px rgba(1,33,105,1)',
+                        'uk-card-red': '8px 8px 0px 0px rgba(200,16,46,1)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom UK Themed Background */
+        body {
+            background-color: #012169;
+            background-image: 
+                radial-gradient(circle at 100% 150%, #C8102E 24%, transparent 24%),
+                radial-gradient(circle at 0% -50%, #C8102E 24%, transparent 24%);
+            background-attachment: fixed;
+        }
+
+        /* Abstract Union Jack Lines */
+        .bg-lines {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                linear-gradient(45deg, transparent 48%, rgba(255,255,255,0.03) 48%, rgba(255,255,255,0.03) 52%, transparent 52%),
+                linear-gradient(-45deg, transparent 48%, rgba(255,255,255,0.03) 48%, rgba(255,255,255,0.03) 52%, transparent 52%),
+                linear-gradient(90deg, transparent 49%, rgba(255,255,255,0.03) 49%, rgba(255,255,255,0.03) 51%, transparent 51%),
+                linear-gradient(0deg, transparent 49%, rgba(255,255,255,0.03) 49%, rgba(255,255,255,0.03) 51%, transparent 51%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Notebook input style */
+        .input-notebook {
+            background: transparent;
+            border: none;
+            border-bottom: 2px dashed #C5A97D;
+            border-radius: 0;
+            padding: 0.5rem 0;
+            transition: all 0.3s ease;
+        }
+        .input-notebook:focus {
+            outline: none;
+            border-bottom: 2px solid #C8102E;
+            box-shadow: 0 4px 2px -2px rgba(200,16,46,0.2);
+        }
+
+        /* Timeline Graphic CSS */
+        .timeline-container {
+            position: relative;
+            width: 100%;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+        .timeline-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #cbd5e1;
+            z-index: 1;
+        }
+        .timeline-point {
+            position: relative;
+            z-index: 2;
+            background: white;
+            border: 2px solid #94a3b8;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            justify-content: center;
+        }
+        .timeline-label {
+            position: absolute;
+            top: 20px;
+            font-size: 0.75rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+        
+        /* Tense Specific Highlights */
+        .highlight-present .point-present { border-color: #C8102E; background: #C8102E; }
+        .highlight-perfect .line-past-to-present { 
+            position: absolute; left: 0; width: 50%; height: 4px; background: #C8102E; top: 50%; transform: translateY(-50%); z-index: 1;
+        }
+        .highlight-perfect .point-present { border-color: #C8102E; background: #C8102E; }
+        .highlight-future-cont .line-future { 
+            position: absolute; right: 15%; width: 20%; height: 4px; background: #C8102E; top: 50%; transform: translateY(-50%); z-index: 1; border-radius: 4px;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #012169; }
+        ::-webkit-scrollbar-thumb { background: #C8102E; border-radius: 4px; }
+    </style>
+</head>
+<body class="text-gray-800 font-sans min-h-screen relative overflow-x-hidden">
+    <div class="bg-lines"></div>
+
+    <!-- Header -->
+    <header class="py-8 px-6 md:px-12 flex justify-between items-center text-white relative z-10">
+        <div>
+            <h1 class="font-serif text-4xl font-bold tracking-wider italic text-uk-gold">Oxford Bound</h1>
+            <p class="text-sm uppercase tracking-[0.2em] opacity-80 mt-1">The Queen's English Vault</p>
+        </div>
+        <!-- Django: if user.is_authenticated -->
+        <div class="hidden md:block text-right">
+            <p class="font-serif italic text-lg">Godspeed, Student!</p>
+            <p class="text-xs text-uk-gold">Target: UK Universities</p>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 pb-20 relative z-10">
+        
+        <!-- Asymmetrical Grid Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            
+            <!-- LEFT COLUMN: ADD VOCABULARY -->
+            <div class="lg:col-span-5 relative">
+                <!-- Django: <form method="POST" action="{% url 'add_vocab' %}"> -->
+                <!-- Django: {% csrf_token %} -->
+                <form action="#" method="POST" class="bg-uk-paper p-8 rounded-xl shadow-uk-card border-2 border-uk-navy sticky top-8 z-20 transform -rotate-1 hover:rotate-0 transition-transform duration-300">
+                    
+                    <div class="absolute -top-4 -right-4 w-12 h-12 bg-uk-red rounded-full flex items-center justify-center border-4 border-uk-paper shadow-lg">
+                        <span class="text-white text-2xl font-serif leading-none">+</span>
+                    </div>
+
+                    <h2 class="font-serif text-3xl font-bold text-uk-navy mb-6">Archive New Word</h2>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-xs uppercase tracking-widest text-gray-500 font-bold mb-1">English Word</label>
+                            <!-- Django: {{ form.english_word }} -->
+                            <input type="text" placeholder="e.g. Ubiquitous" class="w-full input-notebook text-lg font-serif text-uk-navy" required>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs uppercase tracking-widest text-gray-500 font-bold mb-1">Indonesian Meaning</label>
+                            <!-- Django: {{ form.indonesian_meaning }} -->
+                            <input type="text" placeholder="e.g. Ada di mana-mana" class="w-full input-notebook text-lg font-serif text-uk-navy" required>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs uppercase tracking-widest text-gray-500 font-bold mb-1">First Time Heard (Context)</label>
+                            <!-- Django: {{ form.first_context_sentence }} -->
+                            <textarea rows="3" placeholder="Where did you hear this? Write the sentence..." class="w-full input-notebook text-md font-sans text-uk-navy resize-none" required></textarea>
+                        </div>
+
+                        <button type="button" class="w-full py-4 bg-uk-navy text-white font-bold tracking-wider uppercase text-sm rounded hover:bg-uk-red transition-colors duration-300 shadow-md">
+                            Save to Vault
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- RIGHT COLUMN: DAILY PRACTICE -->
+            <div class="lg:col-span-7 space-y-12">
+                
+                <!-- Random Word Section -->
+                <div class="bg-white p-8 rounded-xl shadow-uk-card-red border-2 border-uk-red relative">
+                    <!-- Decorative Crown or Crest placeholder -->
+                    <div class="absolute top-4 right-4 text-uk-red opacity-20">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/>
+                        </svg>
+                    </div>
+
+                    <p class="text-sm font-bold text-uk-red uppercase tracking-widest mb-2">Today's Subject</p>
+                    
+                    <!-- Django: {{ daily_word.english_word }} -->
+                    <h2 class="font-serif text-5xl font-black text-uk-navy mb-2 capitalize">Flabbergasted</h2>
+                    
+                    <!-- Django: {{ daily_word.indonesian_meaning }} -->
+                    <p class="text-xl font-serif italic text-gray-600 mb-6 border-l-4 border-uk-gold pl-4">"Sangat terkejut / Tercengang"</p>
+                    
+                    <div class="flex items-center space-x-4">
+                        <!-- Django: <a href="{% url 'refresh_daily_word' %}" ...> -->
+                        <button type="button" class="px-6 py-2 border-2 border-uk-navy text-uk-navy font-semibold rounded hover:bg-uk-navy hover:text-white transition-colors duration-200 flex items-center text-sm">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                            Coba Kata Lain
+                        </button>
+                    </div>
+                </div>
+
+                <!-- TENSE CHALLENGES CONTAINER (Redesigned as Examination Paper) -->
+                <!-- Django: <form method="POST" action="{% url 'submit_daily_practice' %}"> -->
+                <!-- Django: {% csrf_token %} -->
+                <form action="#" method="POST" class="bg-uk-paper p-8 md:p-12 rounded-xl shadow-uk-card border-2 border-uk-navy relative mt-8">
+                    
+                    <!-- Elegant Exam Header -->
+                    <div class="text-center border-b-4 border-double border-uk-navy pb-6 mb-10 relative">
+                        <!-- Decorative corner pieces (CSS only for theme) -->
+                        <div class="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-uk-navy"></div>
+                        <div class="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-uk-navy"></div>
+                        
+                        <h3 class="font-serif text-3xl md:text-4xl font-black text-uk-navy uppercase tracking-widest">Daily Examination</h3>
+                        <p class="font-sans text-sm text-uk-red font-bold uppercase tracking-[0.3em] mt-2">3 Sentences &bull; 3 Tenses</p>
+                        <p class="font-sans text-xs text-gray-500 uppercase tracking-widest mt-4">Tab Guide: [1] Write &nbsp;&bull;&nbsp; [2] Formula &nbsp;&bull;&nbsp; [3] Timeline &nbsp;&bull;&nbsp; [4] Examples</p>
+                    </div>
+
+                    <!-- Django: {% for tense in random_tenses %} -->
+                    <!-- TENSE BLOCK 1 -->
+                    <div class="tabs-container mb-12 pb-10 border-b-2 border-dashed border-gray-300">
+                        
+                        <!-- Header & Number Tabs inline -->
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                            <div class="font-serif text-2xl font-bold text-uk-navy flex items-center">
+                                <span class="text-uk-red mr-3 text-3xl">I.</span> Simple Present
+                                <!-- Django: <input type="hidden" name="tense_1_id" value="{{ tense.id }}"> -->
+                            </div>
+                            
+                            <!-- Inline Number Tabs -->
+                            <div class="flex items-center space-x-1 bg-white p-1 border border-uk-navy rounded shadow-sm">
+                                <button type="button" data-target="#t1-input" class="tab-btn w-8 h-8 flex items-center justify-center rounded-sm bg-uk-navy text-white font-serif font-bold transition-colors" title="Write">1</button>
+                                <button type="button" data-target="#t1-rumus" class="tab-btn w-8 h-8 flex items-center justify-center rounded-sm bg-transparent text-uk-navy hover:bg-gray-200 font-serif font-bold transition-colors" title="Rumus">2</button>
+                                <button type="button" data-target="#t1-grafik" class="tab-btn w-8 h-8 flex items-center justify-center rounded-sm bg-transparent text-uk-navy hover:bg-gray-200 font-serif font-bold transition-colors" title="Grafik Waktu">3</button>
+                                <button type="button" data-target="#t1-contoh" class="tab-btn w-8 h-8 flex items-center justify-center rounded-sm bg-transparent text-uk-navy hover:bg-gray-200 font-serif font-bold transition-colors" title="Contoh">4</button>
+                            </div>
+                        </div>
+
+                        <!-- Tab Panels -->
+                        <div class="relative">
+                            <!-- TAB 1: INPUT -->
+                            <div id="t1-input" class="tab-panel block">
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Your Sentence:</label>
+                                <!-- Django: {{ form.sentence_1 }} -->
+                                <textarea rows="2" class="w-full input-notebook text-xl font-serif text-uk-navy resize-none" placeholder="I am always flabbergasted by..."></textarea>
+                            </div>
+
+                            <!-- TAB 2: RUMUS -->
+                            <div id="t1-rumus" class="tab-panel hidden bg-white p-5 border border-uk-navy shadow-sm">
+                                <h4 class="font-serif font-bold text-uk-red mb-2 uppercase text-sm tracking-widest">Formula</h4>
+                                <p class="font-mono text-lg text-uk-navy font-bold">S + is/am/are + adjective <span class="text-gray-400 font-normal">(flabbergasted)</span></p>
+                                <p class="text-sm text-gray-600 mt-2 italic">*Kosa kata ini berfungsi sebagai adjective (kata sifat).</p>
+                            </div>
+
+                            <!-- TAB 3: GRAFIK WAKTU -->
+                            <div id="t1-grafik" class="tab-panel hidden bg-white p-5 border border-uk-navy shadow-sm">
+                                <p class="text-center font-serif text-uk-navy mb-4 font-bold">Fakta Umum / Kebiasaan</p>
+                                <div class="timeline-container highlight-present max-w-md mx-auto">
+                                    <div class="timeline-line"></div>
+                                    <div class="timeline-point"><span class="timeline-label">Past</span></div>
+                                    <div class="timeline-point point-present"><span class="timeline-label">Present</span></div>
+                                    <div class="timeline-point"><span class="timeline-label">Future</span></div>
+                                </div>
+                            </div>
+
+                            <!-- TAB 4: CONTOH -->
+                            <div id="t1-contoh" class="tab-panel hidden bg-white p-5 border border-uk-navy shadow-sm space-y-3 font-serif">
+                                <div class="text-uk-navy"><span class="font-bold text-green-700 mr-2">(+)</span> He is completely flabbergasted by the news.</div>
+                                <div class="text-uk-navy"><span class="font-bold text-red-700 mr-2">(-)</span> She is not flabbergasted easily.</div>
+                                <div class="text-uk-navy"><span class="font-bold text-blue-700 mr-2">(?)</span> Are you flabbergasted by the test results?</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Django: {% endfor %} -->
+
+
+                    <!-- TENSE BLOCK 2 (Dummy for visualization) -->
+                    <div class="tabs-container mb-12 pb-10 border-b-2 border-dashed border-gray-300">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                            <div class="font-serif text-2xl font-bold text-uk-navy flex items-center">
+                                <span class="text-uk-red mr-3 text-3xl">II.</span> Present Perfect
+                            </div>
+                            <div class="flex items-center space-x-1 bg-white p-1 border border-uk-navy rounded shadow-sm">
+                                <button type="button" data-target="#t2-input" class="tab-btn w-8 h-8 flex items-center justify-center rounded-sm bg-uk-navy text-white font-serif font-bold transition-colors">1</button>
+                                <button type="button" data-target="#t2-rumus" class="tab-btn w-8 h-8 flex items-center justify-center rounded-sm bg-transparent text-uk-navy hover:bg-gray-200 font-serif font-bold transition-colors">2</button>
+                                <button type="button" data-target="#t2-grafik" class="tab-btn w-8 h-8 flex items-center justify-center rounded-sm bg-transparent text-uk-navy hover:bg-gray-200 font-serif font-bold transition-colors">3</button>
+                                <button type="button" data-target="#t2-contoh" class="tab-btn w-8 h-8 flex items-center justify-center rounded-sm bg-transparent text-uk-navy hover:bg-gray-200 font-serif font-bold transition-colors">4</button>
+                            </div>
+                        </div>
+                        <div class="relative">
+                            <div id="t2-input" class="tab-panel block">
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Your Sentence:</label>
+                                <textarea rows="2" class="w-full input-notebook text-xl font-serif text-uk-navy resize-none" placeholder="I have been flabbergasted since..."></textarea>
+                            </div>
+                            <div id="t2-rumus" class="tab-panel hidden bg-white p-5 border border-uk-navy shadow-sm">
+                                <h4 class="font-serif font-bold text-uk-red mb-2 uppercase text-sm tracking-widest">Formula</h4>
+                                <p class="font-mono text-lg text-uk-navy font-bold">S + have/has + been + adjective</p>
+                            </div>
+                            <div id="t2-grafik" class="tab-panel hidden bg-white p-5 border border-uk-navy shadow-sm">
+                                <p class="text-center font-serif text-uk-navy mb-4 font-bold">Masa lalu berdampak hingga sekarang</p>
+                                <div class="timeline-container highlight-perfect max-w-md mx-auto">
+                                    <div class="timeline-line"></div>
+                                    <div class="line-past-to-present"></div>
+                                    <div class="timeline-point"><span class="timeline-label">Past</span></div>
+                                    <div class="timeline-point point-present"><span class="timeline-label">Present</span></div>
+                                    <div class="timeline-point"><span class="timeline-label">Future</span></div>
+                                </div>
+                            </div>
+                            <div id="t2-contoh" class="tab-panel hidden bg-white p-5 border border-uk-navy shadow-sm space-y-3 font-serif">
+                                <div class="text-uk-navy"><span class="font-bold text-green-700 mr-2">(+)</span> They have been flabbergasted by the decision.</div>
+                                <div class="text-uk-navy"><span class="font-bold text-red-700 mr-2">(-)</span> I haven't been flabbergasted like this in years.</div>
+                                <div class="text-uk-navy"><span class="font-bold text-blue-700 mr-2">(?)</span> Has he been flabbergasted by her audacity?</div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- TENSE BLOCK 3 (Dummy for visualization) -->
+                    <div class="tabs-container mb-12">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                            <div class="font-serif text-2xl font-bold text-uk-navy flex items-center">
+                                <span class="text-uk-red mr-3 text-3xl">III.</span> Future Continuous
+                            </div>
+                            <div class="flex items-center space-x-1 bg-white p-1 border border-uk-navy rounded shadow-sm">
+                                <button type="button" data-target="#t3-input" class="tab-btn w-8 h-8 flex items-center justify-center rounded-sm bg-uk-navy text-white font-serif font-bold transition-colors">1</button>
+                                <button type="button" data-target="#t3-rumus" class="tab-btn w-8 h-8 flex items-center justify-center rounded-sm bg-transparent text-uk-navy hover:bg-gray-200 font-serif font-bold transition-colors">2</button>
+                                <button type="button" data-target="#t3-grafik" class="tab-btn w-8 h-8 flex items-center justify-center rounded-sm bg-transparent text-uk-navy hover:bg-gray-200 font-serif font-bold transition-colors">3</button>
+                                <button type="button" data-target="#t3-contoh" class="tab-btn w-8 h-8 flex items-center justify-center rounded-sm bg-transparent text-uk-navy hover:bg-gray-200 font-serif font-bold transition-colors">4</button>
+                            </div>
+                        </div>
+                        <div class="relative">
+                            <div id="t3-input" class="tab-panel block">
+                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Your Sentence:</label>
+                                <textarea rows="2" class="w-full input-notebook text-xl font-serif text-uk-navy resize-none" placeholder="At this time tomorrow, I will be feeling flabbergasted..."></textarea>
+                            </div>
+                            <div id="t3-rumus" class="tab-panel hidden bg-white p-5 border border-uk-navy shadow-sm">
+                                <h4 class="font-serif font-bold text-uk-red mb-2 uppercase text-sm tracking-widest">Formula</h4>
+                                <p class="font-mono text-lg text-uk-navy font-bold">S + will be + feeling/getting + adjective</p>
+                            </div>
+                            <div id="t3-grafik" class="tab-panel hidden bg-white p-5 border border-uk-navy shadow-sm">
+                                <p class="text-center font-serif text-uk-navy mb-4 font-bold">Sedang terjadi di suatu titik di masa depan</p>
+                                <div class="timeline-container highlight-future-cont max-w-md mx-auto">
+                                    <div class="timeline-line"></div>
+                                    <div class="line-future"></div>
+                                    <div class="timeline-point"><span class="timeline-label">Past</span></div>
+                                    <div class="timeline-point"><span class="timeline-label">Present</span></div>
+                                    <div class="timeline-point"><span class="timeline-label">Future</span></div>
+                                </div>
+                            </div>
+                            <div id="t3-contoh" class="tab-panel hidden bg-white p-5 border border-uk-navy shadow-sm space-y-3 font-serif">
+                                <div class="text-uk-navy"><span class="font-bold text-green-700 mr-2">(+)</span> They will be feeling flabbergasted when we arrive.</div>
+                                <div class="text-uk-navy"><span class="font-bold text-red-700 mr-2">(-)</span> He will not be getting flabbergasted.</div>
+                                <div class="text-uk-navy"><span class="font-bold text-blue-700 mr-2">(?)</span> Will you be feeling flabbergasted?</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SINGLE SUBMIT BUTTON -->
+                    <div class="mt-4 pt-8 border-t-4 border-double border-uk-navy">
+                        <button type="submit" class="w-full py-5 bg-uk-navy text-white font-serif font-bold tracking-[0.2em] uppercase text-xl rounded hover:bg-uk-red transition-colors duration-300 shadow-[8px_8px_0px_0px_rgba(200,16,46,1)] border-2 border-uk-navy hover:shadow-none hover:translate-x-2 hover:translate-y-2">
+                            Hand in Examination
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Vanilla JS for isolated Tab functionality -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Select all tab buttons across the entire page
+            const allTabBtns = document.querySelectorAll('.tab-btn');
+
+            allTabBtns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // The target panel id (e.g. #t1-rumus)
+                    const targetSelector = this.getAttribute('data-target');
+                    
+                    // The specific container for this tense block
+                    const parentContainer = this.closest('.tabs-container');
+                    
+                    // Reset all buttons in THIS container ONLY (Updated colors for theme)
+                    const containerBtns = parentContainer.querySelectorAll('.tab-btn');
+                    containerBtns.forEach(b => {
+                        b.classList.remove('bg-uk-navy', 'text-white');
+                        b.classList.add('bg-transparent', 'text-uk-navy');
+                    });
+                    
+                    // Highlight the clicked button
+                    this.classList.remove('bg-transparent', 'text-uk-navy');
+                    this.classList.add('bg-uk-navy', 'text-white');
+                    
+                    // Hide all panels in THIS container ONLY
+                    const containerPanels = parentContainer.querySelectorAll('.tab-panel');
+                    containerPanels.forEach(p => {
+                        p.classList.add('hidden');
+                        p.classList.remove('block');
+                    });
+                    
+                    // Show the specific target panel
+                    const targetPanel = parentContainer.querySelector(targetSelector);
+                    if(targetPanel) {
+                        targetPanel.classList.remove('hidden');
+                        targetPanel.classList.add('block');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
