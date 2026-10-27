@@ -233,15 +233,8 @@
                         
                         <!-- Header & Number Tabs inline -->
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-                            <div class="font-serif text-2xl font-bold text-uk-navy flex items-center">
-                                <span class="text-uk-red mr-3 text-3xl">
-                                    {% if forloop.counter == 1 %}
-                                    I
-                                    {% elif forloop.counter == 2 %}
-                                    II
-                                    {% elif forloop.counter == 3 %}
-                                    III
-                                    {% endif %}.</span> {{ tense.name }}
+                            <div class="font-serif text-2xl font-bold text-uk-navy flex items-start">
+                                <span class="text-uk-red mr-3 text-2xl">{% if forloop.counter == 1 %}I.{% elif forloop.counter == 2 %}II.{% elif forloop.counter == 3 %}III.{% endif %}</span>{{ tense.name }}
                                 <!-- Django: <input type="hidden" name="tense_1_id" value="{{ tense.id }}"> -->
                             </div>
                             
