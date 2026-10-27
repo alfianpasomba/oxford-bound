@@ -148,9 +148,8 @@
             
             <!-- LEFT COLUMN: ADD VOCABULARY -->
             <div class="lg:col-span-5 relative">
-                <!-- Django: <form method="POST" action="{% url 'add_vocab' %}"> -->
-                <!-- Django: {% csrf_token %} -->
-                <form action="#" method="POST" class="bg-uk-paper p-8 rounded-xl shadow-uk-card border-2 border-uk-navy sticky top-8 z-20 transform -rotate-1 hover:rotate-0 transition-transform duration-300">
+                <form action="{% url 'add_vocabulary' %}" method="POST" class="bg-uk-paper p-8 rounded-xl shadow-uk-card border-2 border-uk-navy sticky top-8 z-20 transform -rotate-1 hover:rotate-0 transition-transform duration-300">
+                    {% csrf_token %}
                     
                     <div class="absolute -top-4 -right-4 w-12 h-12 bg-uk-red rounded-full flex items-center justify-center border-4 border-uk-paper shadow-lg">
                         <span class="text-white text-2xl font-serif leading-none">+</span>
@@ -162,22 +161,22 @@
                         <div>
                             <label class="block text-xs uppercase tracking-widest text-gray-500 font-bold mb-1">English Word</label>
                             <!-- Django: {{ form.english_word }} -->
-                            <input type="text" placeholder="e.g. Ubiquitous" class="w-full input-notebook text-lg font-serif text-uk-navy" required>
+                            <input type="text" name="word" placeholder="e.g. Ubiquitous" class="w-full input-notebook text-lg font-serif text-uk-navy" required>
                         </div>
 
                         <div>
                             <label class="block text-xs uppercase tracking-widest text-gray-500 font-bold mb-1">Indonesian Meaning</label>
                             <!-- Django: {{ form.indonesian_meaning }} -->
-                            <input type="text" placeholder="e.g. Ada di mana-mana" class="w-full input-notebook text-lg font-serif text-uk-navy" required>
+                            <input type="text" name="meaning" placeholder="e.g. Ada di mana-mana" class="w-full input-notebook text-lg font-serif text-uk-navy" required>
                         </div>
 
                         <div>
                             <label class="block text-xs uppercase tracking-widest text-gray-500 font-bold mb-1">First Time Heard (Context)</label>
                             <!-- Django: {{ form.first_context_sentence }} -->
-                            <textarea rows="3" placeholder="Where did you hear this? Write the sentence..." class="w-full input-notebook text-md font-sans text-uk-navy resize-none" required></textarea>
+                            <textarea rows="3" name="first_sentence" placeholder="Where did you hear this? Write the sentence..." class="w-full input-notebook text-md font-sans text-uk-navy resize-none" required></textarea>
                         </div>
 
-                        <button type="button" class="w-full py-4 bg-uk-navy text-white font-bold tracking-wider uppercase text-sm rounded hover:bg-uk-red transition-colors duration-300 shadow-md">
+                        <button type="submit" class="w-full py-4 bg-uk-navy text-white font-bold tracking-wider uppercase text-sm rounded hover:bg-uk-red transition-colors duration-300 shadow-md">
                             Save to Vault
                         </button>
                     </div>
@@ -199,25 +198,24 @@
                     <p class="text-sm font-bold text-uk-red uppercase tracking-widest mb-2">Today's Subject</p>
                     
                     <!-- Django: {{ daily_word.english_word }} -->
-                    <h2 class="font-serif text-5xl font-black text-uk-navy mb-2 capitalize">Flabbergasted</h2>
+                    <h2 class="font-serif text-5xl font-black text-uk-navy mb-2 capitalize">{{ random_word.word }}</h2>
                     
                     <!-- Django: {{ daily_word.indonesian_meaning }} -->
-                    <p class="text-xl font-serif italic text-gray-600 mb-6 border-l-4 border-uk-gold pl-4">"Sangat terkejut / Tercengang"</p>
+                    <p class="text-xl font-serif italic text-gray-600 mb-6 border-l-4 border-uk-gold pl-4">{{ random_word.meaning }}</p>
                     
                     <div class="flex items-center space-x-4">
-                        <!-- Django: <a href="{% url 'refresh_daily_word' %}" ...> -->
-                        <button type="button" class="px-6 py-2 border-2 border-uk-navy text-uk-navy font-semibold rounded hover:bg-uk-navy hover:text-white transition-colors duration-200 flex items-center text-sm">
+                        <a href="{% url 'dashboard' %}?exclude_word={{ random_word.id }}" class="px-6 py-2 border-2 border-uk-navy text-uk-navy font-semibold rounded hover:bg-uk-navy hover:text-white transition-colors duration-200 flex items-center text-sm">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                             Coba Kata Lain
-                        </button>
+                        </a>
                     </div>
                 </div>
 
                 <!-- TENSE CHALLENGES CONTAINER (Redesigned as Examination Paper) -->
-                <!-- Django: <form method="POST" action="{% url 'submit_daily_practice' %}"> -->
-                <!-- Django: {% csrf_token %} -->
-                <form action="#" method="POST" class="bg-uk-paper p-8 md:p-12 rounded-xl shadow-uk-card border-2 border-uk-navy relative mt-8">
-                    
+                <!-- Django: <form method="POST" action="{% url 'submit_challenge' %}"> -->
+                    <form action="{% url 'submit_challenge' %}" method="POST" class="bg-uk-paper p-8 md:p-12 rounded-xl shadow-uk-card border-2 border-uk-navy relative mt-8">
+                    {% csrf_token %}
+                    <input type="hidden" name="vocab_id" value="{{ random_word.id }}">
                     <!-- Elegant Exam Header -->
                     <div class="text-center border-b-4 border-double border-uk-navy pb-6 mb-10 relative">
                         <!-- Decorative corner pieces (CSS only for theme) -->
@@ -229,14 +227,21 @@
                         <p class="font-sans text-xs text-gray-500 uppercase tracking-widest mt-4">Tab Guide: [1] Write &nbsp;&bull;&nbsp; [2] Formula &nbsp;&bull;&nbsp; [3] Timeline &nbsp;&bull;&nbsp; [4] Examples</p>
                     </div>
 
-                    <!-- Django: {% for tense in random_tenses %} -->
+                    {% for tense in random_tenses %}
                     <!-- TENSE BLOCK 1 -->
                     <div class="tabs-container mb-12 pb-10 border-b-2 border-dashed border-gray-300">
                         
                         <!-- Header & Number Tabs inline -->
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
                             <div class="font-serif text-2xl font-bold text-uk-navy flex items-center">
-                                <span class="text-uk-red mr-3 text-3xl">I.</span> Simple Present
+                                <span class="text-uk-red mr-3 text-3xl">
+                                    {% if forloop.counter == 1 %}
+                                    I
+                                    {% elif forloop.counter == 2 %}
+                                    II
+                                    {% elif forloop.counter == 3 %}
+                                    III
+                                    {% endif %}.</span> {{ tense.name }}
                                 <!-- Django: <input type="hidden" name="tense_1_id" value="{{ tense.id }}"> -->
                             </div>
                             
@@ -254,15 +259,15 @@
                             <!-- TAB 1: INPUT -->
                             <div id="t1-input" class="tab-panel block">
                                 <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Your Sentence:</label>
+                                <input type="hidden" name="tense_id" value="{{ tense.id }}">
                                 <!-- Django: {{ form.sentence_1 }} -->
-                                <textarea rows="2" class="w-full input-notebook text-xl font-serif text-uk-navy resize-none" placeholder="I am always flabbergasted by..."></textarea>
+                                <textarea name="sentence" rows="2" class="w-full input-notebook text-xl font-serif text-uk-navy resize-none" placeholder="I am always flabbergasted by..."></textarea>
                             </div>
 
                             <!-- TAB 2: RUMUS -->
                             <div id="t1-rumus" class="tab-panel hidden bg-white p-5 border border-uk-navy shadow-sm">
                                 <h4 class="font-serif font-bold text-uk-red mb-2 uppercase text-sm tracking-widest">Formula</h4>
-                                <p class="font-mono text-lg text-uk-navy font-bold">S + is/am/are + adjective <span class="text-gray-400 font-normal">(flabbergasted)</span></p>
-                                <p class="text-sm text-gray-600 mt-2 italic">*Kosa kata ini berfungsi sebagai adjective (kata sifat).</p>
+                                <p class="font-mono text-lg text-uk-navy font-bold">{{ tense.formula }}</p>
                             </div>
 
                             <!-- TAB 3: GRAFIK WAKTU -->
@@ -278,95 +283,13 @@
 
                             <!-- TAB 4: CONTOH -->
                             <div id="t1-contoh" class="tab-panel hidden bg-white p-5 border border-uk-navy shadow-sm space-y-3 font-serif">
-                                <div class="text-uk-navy"><span class="font-bold text-green-700 mr-2">(+)</span> He is completely flabbergasted by the news.</div>
-                                <div class="text-uk-navy"><span class="font-bold text-red-700 mr-2">(-)</span> She is not flabbergasted easily.</div>
-                                <div class="text-uk-navy"><span class="font-bold text-blue-700 mr-2">(?)</span> Are you flabbergasted by the test results?</div>
+                                <div class="text-uk-navy"><span class="font-bold text-green-700 mr-2">(+)</span> {{ tense.positive_example }}</div>
+                                <div class="text-uk-navy"><span class="font-bold text-red-700 mr-2">(-)</span> {{ tense.negative_example }}</div>
+                                <div class="text-uk-navy"><span class="font-bold text-blue-700 mr-2">(?)</span> {{ tense.other_example }}</div>
                             </div>
                         </div>
                     </div>
-                    <!-- Django: {% endfor %} -->
-
-
-                    <!-- TENSE BLOCK 2 (Dummy for visualization) -->
-                    <div class="tabs-container mb-12 pb-10 border-b-2 border-dashed border-gray-300">
-                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-                            <div class="font-serif text-2xl font-bold text-uk-navy flex items-center">
-                                <span class="text-uk-red mr-3 text-3xl">II.</span> Present Perfect
-                            </div>
-                            <div class="flex items-center space-x-1 bg-white p-1 border border-uk-navy rounded shadow-sm">
-                                <button type="button" data-target="#t2-input" class="tab-btn w-8 h-8 flex items-center justify-center rounded-sm bg-uk-navy text-white font-serif font-bold transition-colors">1</button>
-                                <button type="button" data-target="#t2-rumus" class="tab-btn w-8 h-8 flex items-center justify-center rounded-sm bg-transparent text-uk-navy hover:bg-gray-200 font-serif font-bold transition-colors">2</button>
-                                <button type="button" data-target="#t2-grafik" class="tab-btn w-8 h-8 flex items-center justify-center rounded-sm bg-transparent text-uk-navy hover:bg-gray-200 font-serif font-bold transition-colors">3</button>
-                                <button type="button" data-target="#t2-contoh" class="tab-btn w-8 h-8 flex items-center justify-center rounded-sm bg-transparent text-uk-navy hover:bg-gray-200 font-serif font-bold transition-colors">4</button>
-                            </div>
-                        </div>
-                        <div class="relative">
-                            <div id="t2-input" class="tab-panel block">
-                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Your Sentence:</label>
-                                <textarea rows="2" class="w-full input-notebook text-xl font-serif text-uk-navy resize-none" placeholder="I have been flabbergasted since..."></textarea>
-                            </div>
-                            <div id="t2-rumus" class="tab-panel hidden bg-white p-5 border border-uk-navy shadow-sm">
-                                <h4 class="font-serif font-bold text-uk-red mb-2 uppercase text-sm tracking-widest">Formula</h4>
-                                <p class="font-mono text-lg text-uk-navy font-bold">S + have/has + been + adjective</p>
-                            </div>
-                            <div id="t2-grafik" class="tab-panel hidden bg-white p-5 border border-uk-navy shadow-sm">
-                                <p class="text-center font-serif text-uk-navy mb-4 font-bold">Masa lalu berdampak hingga sekarang</p>
-                                <div class="timeline-container highlight-perfect max-w-md mx-auto">
-                                    <div class="timeline-line"></div>
-                                    <div class="line-past-to-present"></div>
-                                    <div class="timeline-point"><span class="timeline-label">Past</span></div>
-                                    <div class="timeline-point point-present"><span class="timeline-label">Present</span></div>
-                                    <div class="timeline-point"><span class="timeline-label">Future</span></div>
-                                </div>
-                            </div>
-                            <div id="t2-contoh" class="tab-panel hidden bg-white p-5 border border-uk-navy shadow-sm space-y-3 font-serif">
-                                <div class="text-uk-navy"><span class="font-bold text-green-700 mr-2">(+)</span> They have been flabbergasted by the decision.</div>
-                                <div class="text-uk-navy"><span class="font-bold text-red-700 mr-2">(-)</span> I haven't been flabbergasted like this in years.</div>
-                                <div class="text-uk-navy"><span class="font-bold text-blue-700 mr-2">(?)</span> Has he been flabbergasted by her audacity?</div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <!-- TENSE BLOCK 3 (Dummy for visualization) -->
-                    <div class="tabs-container mb-12">
-                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-                            <div class="font-serif text-2xl font-bold text-uk-navy flex items-center">
-                                <span class="text-uk-red mr-3 text-3xl">III.</span> Future Continuous
-                            </div>
-                            <div class="flex items-center space-x-1 bg-white p-1 border border-uk-navy rounded shadow-sm">
-                                <button type="button" data-target="#t3-input" class="tab-btn w-8 h-8 flex items-center justify-center rounded-sm bg-uk-navy text-white font-serif font-bold transition-colors">1</button>
-                                <button type="button" data-target="#t3-rumus" class="tab-btn w-8 h-8 flex items-center justify-center rounded-sm bg-transparent text-uk-navy hover:bg-gray-200 font-serif font-bold transition-colors">2</button>
-                                <button type="button" data-target="#t3-grafik" class="tab-btn w-8 h-8 flex items-center justify-center rounded-sm bg-transparent text-uk-navy hover:bg-gray-200 font-serif font-bold transition-colors">3</button>
-                                <button type="button" data-target="#t3-contoh" class="tab-btn w-8 h-8 flex items-center justify-center rounded-sm bg-transparent text-uk-navy hover:bg-gray-200 font-serif font-bold transition-colors">4</button>
-                            </div>
-                        </div>
-                        <div class="relative">
-                            <div id="t3-input" class="tab-panel block">
-                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Your Sentence:</label>
-                                <textarea rows="2" class="w-full input-notebook text-xl font-serif text-uk-navy resize-none" placeholder="At this time tomorrow, I will be feeling flabbergasted..."></textarea>
-                            </div>
-                            <div id="t3-rumus" class="tab-panel hidden bg-white p-5 border border-uk-navy shadow-sm">
-                                <h4 class="font-serif font-bold text-uk-red mb-2 uppercase text-sm tracking-widest">Formula</h4>
-                                <p class="font-mono text-lg text-uk-navy font-bold">S + will be + feeling/getting + adjective</p>
-                            </div>
-                            <div id="t3-grafik" class="tab-panel hidden bg-white p-5 border border-uk-navy shadow-sm">
-                                <p class="text-center font-serif text-uk-navy mb-4 font-bold">Sedang terjadi di suatu titik di masa depan</p>
-                                <div class="timeline-container highlight-future-cont max-w-md mx-auto">
-                                    <div class="timeline-line"></div>
-                                    <div class="line-future"></div>
-                                    <div class="timeline-point"><span class="timeline-label">Past</span></div>
-                                    <div class="timeline-point"><span class="timeline-label">Present</span></div>
-                                    <div class="timeline-point"><span class="timeline-label">Future</span></div>
-                                </div>
-                            </div>
-                            <div id="t3-contoh" class="tab-panel hidden bg-white p-5 border border-uk-navy shadow-sm space-y-3 font-serif">
-                                <div class="text-uk-navy"><span class="font-bold text-green-700 mr-2">(+)</span> They will be feeling flabbergasted when we arrive.</div>
-                                <div class="text-uk-navy"><span class="font-bold text-red-700 mr-2">(-)</span> He will not be getting flabbergasted.</div>
-                                <div class="text-uk-navy"><span class="font-bold text-blue-700 mr-2">(?)</span> Will you be feeling flabbergasted?</div>
-                            </div>
-                        </div>
-                    </div>
+                    {% endfor %}
 
                     <!-- SINGLE SUBMIT BUTTON -->
                     <div class="mt-4 pt-8 border-t-4 border-double border-uk-navy">
